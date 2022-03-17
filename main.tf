@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "= 4.0.0"
+      version = "~> 4.0"
     }
   }
 }
@@ -15,17 +15,17 @@ provider "aws" {
 
 # 1: Create a vpc
 
-resource"aws_vpc""prod-vpc" {
+resource"aws_vpc""dev-vpc" {
   cidr_block="10.0.0.0/16"
   tags={
-    Name = "production"
+    Name = "development"
   }
 }
 
 # 2: Create Internet Gateway
 
 resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.prod-vpc.id
+  vpc_id = aws_vpc.dev-vpc.id
 
   tags = {
     Name = "internet_gateway"
@@ -34,8 +34,8 @@ resource "aws_internet_gateway" "gw" {
 
 # 3: Create a Custom Route Table
 
-resource "aws_route_table" "prod-route-table" {
-  vpc_id = aws_vpc.prod-vpc.id
+resource "aws_route_table" "dev-rt" {
+  vpc_id = aws_vpc.dev-vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -48,7 +48,7 @@ resource "aws_route_table" "prod-route-table" {
   }
 
   tags = {
-    Name = "Prod Route Table"
+    Name = "Dev Route Table"
   }
 }
 
@@ -56,14 +56,14 @@ resource "aws_route_table" "prod-route-table" {
 
 resource"aws_subnet""subnet-1" {
 
-  vpc_id     =aws_vpc.prod-vpc.id
+  vpc_id     =aws_vpc.dev-vpc.id
 
   cidr_block="10.0.1.0/24"
-  availability_zone = "us-east-1a"
+  availability_zone = "us-east-1"
 
   tags={
 
-    Name = "prod-subnet"
+    Name = "dev-subnet"
 
   }
 
@@ -71,9 +71,9 @@ resource"aws_subnet""subnet-1" {
 
 # 5: Associate Subnet with Route Table
 
-resource "aws_route_table_association" "a" {
+resource "aws_route_table_association" "art" {
   subnet_id      = aws_subnet.subnet-1.id
-  route_table_id = aws_route_table.prod-route-table.id
+  route_table_id = aws_route_table.dev-route-table.id
 }
 
 # 6: Create Security Group to allow port 22, 80, 443
@@ -81,7 +81,7 @@ resource "aws_route_table_association" "a" {
 resource "aws_security_group" "allow_web_traffic" {
   name        = "allow_web_traffic"
   description = "Allow Web inbound traffic"
-  vpc_id      = aws_vpc.prod-vpc.id
+  vpc_id      = aws_vpc.dev-vpc.id
 
   ingress {
     description      = "HTTPS"
@@ -147,10 +147,10 @@ resource "aws_eip" "one" {
 # 9: Create Ubuntu server and install/enable apache2
 
 resource "aws_instance" "web_server" {
-  ami           = "ami-04505e74c0741db8d"
+  ami           = "ami-0e472ba40eb589f49"
   instance_type = "t2.micro"
-  availability_zone = "us-east-1a"
-  key_name      = "aws-main-key"
+  availability_zone = "us-east-1"
+  key_name      = "demo"
 
   network_interface {
     device_index = 0
