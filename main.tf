@@ -59,7 +59,7 @@ resource"aws_subnet""subnet-1" {
   vpc_id     =aws_vpc.dev-vpc.id
 
   cidr_block="10.0.1.0/24"
-  availability_zone = "us-east-1"
+  availability_zone = "us-east-1a"
 
   tags={
 
@@ -73,7 +73,7 @@ resource"aws_subnet""subnet-1" {
 
 resource "aws_route_table_association" "art" {
   subnet_id      = aws_subnet.subnet-1.id
-  route_table_id = aws_route_table.dev-route-table.id
+  route_table_id = aws_route_table.dev-rt.id
 }
 
 # 6: Create Security Group to allow port 22, 80, 443
@@ -115,7 +115,7 @@ resource "aws_security_group" "allow_web_traffic" {
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
-    description = "<write as you like>"
+    
   }
   tags = {
     Name = "allow_web_traffic"
@@ -147,9 +147,9 @@ resource "aws_eip" "one" {
 # 9: Create Ubuntu server and install/enable apache2
 
 resource "aws_instance" "web_server" {
-  ami           = "ami-0e472ba40eb589f49"
+  ami           = "ami-04505e74c0741db8d"
   instance_type = "t2.micro"
-  availability_zone = "us-east-1"
+  availability_zone = "us-east-1a"
   key_name      = "demo"
 
   network_interface {
