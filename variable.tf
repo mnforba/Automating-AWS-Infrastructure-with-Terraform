@@ -2,12 +2,12 @@
 variable "aws_access_key" {
   type = string
   description = "AWS Access Key"
-  #default = "AKIAXOZZVLD6R3RI254P"
+  #default = "xxxxxxxxxxxxxxxxxxx"
 }
 variable "aws_secret_key" {
   type = string
   description = "AWS Secret Key"
-  #default = "QLOfayeRpMceMjTWXldblpIsTXBa62rnaeghlRR1"
+  #default = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 }
 #AWS Region
 variable "aws_region" {
